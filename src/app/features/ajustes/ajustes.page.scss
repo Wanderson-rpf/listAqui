@@ -1,0 +1,88 @@
+.cartoes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 16px;
+
+  .cartao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 16px 6px;
+    border-radius: 14px;
+    background: rgba(var(--ion-color-primary-rgb), 0.09);
+
+    strong {
+      font-size: 1.5rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--ion-color-primary);
+    }
+
+    span {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+ion-list-header {
+  padding-inline-start: 16px;
+
+  ion-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+  }
+}
+
+ion-item h2 {
+  font-size: 0.95rem;
+}
+
+ion-item p {
+  font-size: 0.78rem;
+}
+
+.dica {
+  display: block;
+  padding: 0 26px 4px;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.aviso {
+  display: flex;
+  gap: 11px;
+  margin: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(var(--ion-color-warning-rgb), 0.14);
+  font-size: 0.79rem;
+  line-height: 1.45;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--ion-color-warning-shade);
+  }
+
+  strong {
+    display: block;
+  }
+}
+
+.botao-perigo {
+  padding: 4px 14px 14px;
+}
+
+.versao {
+  padding: 8px 16px 28px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--ion-color-medium);
+}

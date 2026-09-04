@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/produtos" text="" />
+    </ion-buttons>
+    <ion-title>{{ produto()?.nome }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="destaque">
+    <span>Ultimo preco pago</span>
+    <strong>{{ precoAtual() | currency: 'BRL' }}</strong>
+    <ion-note>por {{ produto()?.unidadePadrao }}</ion-note>
+
+    @if (acimaDoMenor() > 1) {
+      <div class="alerta">
+        <ion-icon name="trending-up-outline" />
+        {{ acimaDoMenor() | number: '1.0-0' }}% acima do melhor preco que voce ja pagou
+        ({{ menor() | currency: 'BRL' }})
+      </div>
+    } @else if (historico().length > 1) {
+      <div class="alerta bom">
+        <ion-icon name="checkmark-circle" />
+        Este e o melhor preco que voce ja pagou
+      </div>
+    }
+  </div>
+
+  @if (barras().length > 1) {
+    <div class="bloco-grafico">
+      <span class="titulo">Evolucao do preco</span>
+      <div class="grafico">
+        @for (barra of barras(); track barra.registro.itemId) {
+          <div class="coluna">
+            <span class="valor">{{ barra.registro.precoUnitario | number: '1.2-2' }}</span>
+            <div
+              class="barra"
+              [style.height.%]="barra.altura"
+              [class.menor]="barra.ehMenor"
+              [class.maior]="barra.ehMaior"
+            ></div>
+            <span class="data">{{ barra.registro.data | date: 'dd/MM' }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="cartoes">
+    <div class="cartao">
+      <span>Menor</span>
+      <strong class="verde">{{ menor() | currency: 'BRL' }}</strong>
+    </div>
+    <div class="cartao">
+      <span>Media</span>
+      <strong>{{ media() | currency: 'BRL' }}</strong>
+    </div>
+    <div class="cartao">
+      <span>Maior</span>
+      <strong class="vermelho">{{ maior() | currency: 'BRL' }}</strong>
+    </div>
+  </div>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Todas as compras</ion-label>
+      <ion-note>{{ totalGasto() | currency: 'BRL' }} no total</ion-note>
+    </ion-list-header>
+
+    @for (registro of historico(); track registro.itemId) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ registro.precoUnitario | currency: 'BRL' }} <small>por {{ registro.unidade }}</small></h3>
+          <p>
+            {{ registro.data | date: 'dd/MM/yyyy' }}
+            @if (registro.local) {
+              <span> &middot; {{ registro.local }}</span>
+            }
+          </p>
+        </ion-label>
+        <div class="lado" slot="end">
+          <ion-note>{{ formatarQtd(registro.quantidade) }} {{ registro.unidade }}</ion-note>
+          <strong>{{ registro.total | currency: 'BRL' }}</strong>
+        </div>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>

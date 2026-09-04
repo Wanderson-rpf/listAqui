@@ -1,0 +1,73 @@
+/**
+ * Tema do ListAqui.
+ *
+ * A paleta e definida uma vez aqui em variaveis do Ionic; nenhum componente
+ * escreve cor fixa. Trocar a identidade visual do app inteiro e mudar
+ * estes valores.
+ */
+
+:root {
+  /* Verde-petroleo: sobrio, legivel sob luz de supermercado. */
+  --ion-color-primary: #0f766e;
+  --ion-color-primary-rgb: 15, 118, 110;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0d6861;
+  --ion-color-primary-tint: #27847d;
+
+  --ion-color-success: #15803d;
+  --ion-color-success-rgb: 21, 128, 61;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #127136;
+  --ion-color-success-tint: #2c8d50;
+
+  --ion-color-warning: #b45309;
+  --ion-color-warning-rgb: 180, 83, 9;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #9e4908;
+  --ion-color-warning-tint: #bc6422;
+
+  --ion-color-danger: #be123c;
+  --ion-color-danger-rgb: 190, 18, 60;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #a71035;
+  --ion-color-danger-tint: #c52a50;
+
+  --ion-font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* Cantos arredondados consistentes nas listas com recuo. */
+ion-list[inset] {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+ion-item {
+  --padding-start: 16px;
+}
+
+/* Numeros em colunas alinhadas: valores monetarios ficam faceis de comparar. */
+strong,
+.moeda {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Areas de toque confortaveis para uso com uma mao so, no corredor do mercado. */
+ion-button {
+  --border-radius: 10px;
+  min-height: 42px;
+}
+
+ion-tab-button {
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+}
+
+/* Respeita o recorte da tela em celulares com notch. */
+ion-content {
+  --padding-bottom: env(safe-area-inset-bottom);
+}

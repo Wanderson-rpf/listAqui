@@ -1,0 +1,154 @@
+.resumo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 16px;
+  padding: 22px 16px;
+  border-radius: 18px;
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+
+  span {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+  }
+
+  strong {
+    font-size: 2.1rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ion-color-primary);
+  }
+
+  ion-note {
+    font-size: 0.78rem;
+  }
+}
+
+.cabecalho-mes {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 20px 8px;
+
+  .mes {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+  }
+
+  .total-mes {
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-inline-end: 12px;
+  border-radius: 11px;
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &-primary {
+    background: rgba(var(--ion-color-primary-rgb), 0.14);
+    color: var(--ion-color-primary);
+  }
+  &-success {
+    background: rgba(var(--ion-color-success-rgb), 0.14);
+    color: var(--ion-color-success);
+  }
+  &-danger {
+    background: rgba(var(--ion-color-danger-rgb), 0.14);
+    color: var(--ion-color-danger);
+  }
+  &-medium {
+    background: rgba(var(--ion-color-medium-rgb), 0.16);
+    color: var(--ion-color-medium);
+  }
+}
+
+.direita {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  strong {
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ion-note {
+    font-size: 0.72rem;
+  }
+}
+
+.detalhe {
+  // Veu da propria cor de texto: --ion-color-step-* nao existe mais no
+  // Ionic 9 e o fallback claro quebrava o contraste no tema escuro.
+  background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.04);
+  padding-bottom: 8px;
+
+  ion-item {
+    --background: transparent;
+    --min-height: 46px;
+    font-size: 0.87rem;
+  }
+
+  h3 {
+    font-size: 0.9rem;
+  }
+
+  p {
+    font-size: 0.76rem;
+  }
+}
+
+.nota-orcamento {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 20px 8px;
+  font-size: 0.78rem;
+  color: var(--ion-color-medium);
+}
+
+.acoes {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px 4px;
+}
+
+.vazio {
+  padding: 64px 32px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 60px;
+    color: var(--ion-color-medium);
+    opacity: 0.35;
+  }
+
+  h2 {
+    margin: 16px 0 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ion-color-medium);
+  }
+}

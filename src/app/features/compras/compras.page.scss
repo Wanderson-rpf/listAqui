@@ -1,0 +1,135 @@
+.vazio {
+  padding: 56px 32px 24px;
+  text-align: center;
+
+  // Filho direto de proposito: sem o `>` esta regra tambem alcancava o
+  // icone dentro do botao abaixo, que ficava com os mesmos 64px.
+  > ion-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+    opacity: 0.4;
+  }
+
+  h2 {
+    margin: 16px 0 8px;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 24px;
+    color: var(--ion-color-medium);
+    line-height: 1.5;
+    font-size: 0.9rem;
+  }
+
+  // Convite, nao alarme: altura de toque preservada (42px), mas sem o
+  // caixa-alta e a sombra que faziam o botao dominar a tela vazia.
+  ion-button {
+    --box-shadow: none;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    height: 42px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.01em;
+
+    ion-icon {
+      font-size: 18px;
+      margin-inline-end: 6px;
+    }
+  }
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-inline-end: 12px;
+  border-radius: 12px;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  // Cada tipo de compra ganha sua cor, com fundo translucido para
+  // funcionar igual no tema claro e no escuro.
+  &-primary {
+    background: rgba(var(--ion-color-primary-rgb), 0.14);
+    color: var(--ion-color-primary);
+  }
+  &-success {
+    background: rgba(var(--ion-color-success-rgb), 0.14);
+    color: var(--ion-color-success);
+  }
+  &-danger {
+    background: rgba(var(--ion-color-danger-rgb), 0.14);
+    color: var(--ion-color-danger);
+  }
+  &-medium {
+    background: rgba(var(--ion-color-medium-rgb), 0.16);
+    color: var(--ion-color-medium);
+  }
+}
+
+.direita {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+
+  strong {
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .estourou {
+    color: var(--ion-color-danger);
+  }
+}
+
+.linha-progresso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+
+  ion-progress-bar {
+    flex: 1;
+    height: 5px;
+    border-radius: 3px;
+  }
+
+  ion-note {
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+}
+
+/**
+ * No topo da tela a dica vem antes das listas, entao precisa pesar menos
+ * que elas: sem sombra e com fundo de veu, e um aviso e nao um cartao.
+ */
+.cartao-dica {
+  margin: 12px 16px 0;
+  border-radius: 12px;
+  box-shadow: none;
+  --background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.05);
+
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+  }
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 17px;
+  }
+}

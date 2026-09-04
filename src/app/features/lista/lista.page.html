@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/compras" text="" />
+    </ion-buttons>
+    <ion-title>{{ lista()?.nome }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="renomear()" aria-label="Editar compra">
+        <ion-icon slot="icon-only" name="create-outline" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="cabecalho">
+    <ion-chip outline>{{ rotuloTipo() }}</ion-chip>
+    @if (lista()?.local) {
+      <ion-chip outline>
+        <ion-icon name="location-outline" />
+        <ion-label>{{ lista()?.local }}</ion-label>
+      </ion-chip>
+    }
+    @if (lista()?.orcamento) {
+      <ion-chip outline color="warning">
+        <ion-icon name="wallet-outline" />
+        <ion-label>Orcamento R$ {{ lista()?.orcamento }}</ion-label>
+      </ion-chip>
+    }
+  </div>
+
+  <!-- Barra de adicao rapida: digitar e apertar enter e o caminho principal -->
+  <div class="adicionar">
+    <ion-input
+      placeholder="O que voce precisa comprar?"
+      [value]="termo()"
+      [clearInput]="true"
+      (ionInput)="digitou($any($event.target).value)"
+      (keyup.enter)="adicionarDigitado($any($event.target).value)"
+      aria-label="Adicionar item"
+    />
+    <ion-button
+      size="small"
+      (click)="adicionarDigitado(termo())"
+      [disabled]="!termo().trim()"
+      aria-label="Adicionar"
+    >
+      <ion-icon slot="icon-only" name="add-outline" />
+    </ion-button>
+  </div>
+
+  @if (sugestoes().length) {
+    <ion-list class="sugestoes" lines="none">
+      <ion-note class="titulo-sugestoes">Ja comprei antes</ion-note>
+      @for (p of sugestoes(); track p.id) {
+        <ion-item button detail="false" (click)="adicionarSugestao(p)">
+          <ion-icon slot="start" name="time-outline" color="medium" />
+          <ion-label>{{ p.nome }}</ion-label>
+          <ion-note slot="end">{{ p.unidadePadrao }}</ion-note>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (itens().length === 0) {
+    <div class="vazio">
+      <ion-icon name="document-text-outline" />
+      <p>Lista vazia. Comece digitando o primeiro item acima.</p>
+    </div>
+  }
+
+  <ion-list [inset]="true">
+    @for (item of itens(); track item.id) {
+      <ion-item-sliding #sliding>
+        <ion-item button detail="false" (click)="editar(item)">
+          <ion-label>
+            <h2>{{ item.nomeProduto }}</h2>
+            @if (item.observacao) {
+              <p>{{ item.observacao }}</p>
+            }
+          </ion-label>
+
+          <div class="passo" slot="end">
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="ajustar(item, -1, $event)"
+              aria-label="Diminuir"
+            >
+              <ion-icon slot="icon-only" name="remove-outline" />
+            </ion-button>
+
+            <span class="qtd">
+              {{ formatarQtd(item.quantidadePlanejada) }}
+              <small>{{ item.unidade }}</small>
+            </span>
+
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="ajustar(item, 1, $event)"
+              aria-label="Aumentar"
+            >
+              <ion-icon slot="icon-only" name="add-outline" />
+            </ion-button>
+          </div>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="remover(item, sliding)">
+            <ion-icon slot="icon-only" name="trash-outline" />
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    }
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="rodape">
+      <ion-note>{{ itens().length }} itens na lista</ion-note>
+      <ion-button expand="block" (click)="iniciarCompra()">
+        <ion-icon slot="start" name="cart-outline" />
+        Comecar a comprar
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

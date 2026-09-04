@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Precos</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Buscar produto"
+      [value]="busca()"
+      (ionInput)="busca.set($any($event.target).value)"
+      [debounce]="150"
+    />
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (!carregando() && todos().length === 0) {
+    <div class="vazio">
+      <ion-icon name="pricetags-outline" />
+      <h2>Sem precos ainda</h2>
+      <p>
+        Cada item que voce marcar durante uma compra vira historico de preco aqui. Depois de
+        duas compras da certo comparar.
+      </p>
+    </div>
+  }
+
+  <ion-list [inset]="true">
+    @for (item of filtrados(); track item.produto.id) {
+      <ion-item button detail="true" (click)="abrir(item)">
+        <ion-label>
+          <h2>{{ item.produto.nome }}</h2>
+          <p>
+            Comprado {{ item.vezes }}
+            {{ item.vezes === 1 ? 'vez' : 'vezes' }}
+          </p>
+        </ion-label>
+
+        <div class="preco" slot="end">
+          <strong>{{ item.ultimoPreco | currency: 'BRL' }}</strong>
+          <ion-note>por {{ item.produto.unidadePadrao }}</ion-note>
+
+          @if (variacao(item); as v) {
+            <span class="tendencia" [class.subiu]="v > 0" [class.caiu]="v < 0">
+              <ion-icon [name]="v > 0 ? 'trending-up-outline' : 'trending-down-outline'" />
+              {{ v > 0 ? '+' : '' }}{{ v | number: '1.0-0' }}%
+            </span>
+          }
+        </div>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>

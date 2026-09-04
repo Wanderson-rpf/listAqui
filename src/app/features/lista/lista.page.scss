@@ -1,0 +1,119 @@
+.cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 12px 12px 0;
+}
+
+.adicionar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 16px;
+  padding: 4px 4px 4px 14px;
+  border-radius: 14px;
+
+  /**
+   * O Ionic 9 renomeou --ion-color-step-* para --ion-background-color-step-*,
+   * entao o valor antigo caia sempre no fallback claro e, no tema escuro,
+   * dava texto branco sobre fundo branco. Um veu da propria cor de texto
+   * serve aos dois temas: no claro a variavel nao existe e vale o preto.
+   */
+  background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.07);
+
+  ion-input {
+    --padding-start: 0;
+    --padding-end: 0;
+    --color: var(--ion-text-color, #000);
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 1;
+    min-height: 40px;
+    font-size: 0.95rem;
+  }
+
+  ion-button {
+    --border-radius: 10px;
+    margin: 0;
+    height: 38px;
+    width: 38px;
+  }
+}
+
+.sugestoes {
+  margin: 0 16px 12px;
+  border-radius: 14px;
+  overflow: hidden;
+
+  .titulo-sugestoes {
+    display: block;
+    padding: 10px 16px 4px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  ion-item {
+    --min-height: 44px;
+    font-size: 0.9rem;
+  }
+}
+
+.passo {
+  display: flex;
+  align-items: center;
+
+  ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    margin: 0;
+    height: 32px;
+  }
+
+  .qtd {
+    min-width: 46px;
+    text-align: center;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+
+    small {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--ion-color-medium);
+      line-height: 1;
+    }
+  }
+}
+
+.vazio {
+  padding: 40px 32px;
+  text-align: center;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 44px;
+    opacity: 0.35;
+  }
+
+  p {
+    margin-top: 12px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+.rodape {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+
+  ion-note {
+    white-space: nowrap;
+    font-size: 0.78rem;
+  }
+
+  ion-button {
+    flex: 1;
+    margin: 0;
+  }
+}

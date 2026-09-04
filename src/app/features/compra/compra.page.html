@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/compras" text="" />
+    </ion-buttons>
+    <ion-title>{{ lista()?.nome }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="adicionarNaHora()" aria-label="Item fora da lista">
+        <ion-icon slot="icon-only" name="add-circle-outline" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-progress-bar [value]="progresso()" color="success" />
+</ion-header>
+
+<ion-content>
+  @if (pendentes().length) {
+    <div class="secao">
+      <span>Faltam pegar</span>
+      <span class="contador">{{ pendentes().length }}</span>
+    </div>
+
+    <ion-list [inset]="true" lines="inset" class="lista-pendentes">
+      @for (item of pendentes(); track item.id) {
+        <ion-item button detail="false" (click)="riscar(item)">
+          <ion-icon slot="start" class="marcador" name="ellipse-outline" aria-hidden="true" />
+          <ion-label>
+            <h2>{{ item.nomeProduto }}</h2>
+            <p>
+              {{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}
+              @if (item.observacao) {
+                <span> &middot; {{ item.observacao }}</span>
+              }
+            </p>
+          </ion-label>
+          <ion-icon slot="end" class="seta" name="chevron-forward-outline" aria-hidden="true" />
+        </ion-item>
+      }
+    </ion-list>
+  } @else {
+    <div class="tudo-pronto">
+      <ion-icon name="checkmark-done-outline" />
+      <h2>Carrinho completo</h2>
+      <p>Todos os itens da lista foram marcados.</p>
+    </div>
+  }
+
+  @if (comprados().length) {
+    <div class="secao">
+      <span>No carrinho</span>
+      <span class="contador">{{ comprados().length }}</span>
+      <span class="dica-secao">
+        <ion-icon name="arrow-back-outline" aria-hidden="true" />
+        arraste para desfazer
+      </span>
+    </div>
+
+    <ion-list [inset]="true" lines="inset" class="lista-comprados">
+      @for (item of comprados(); track item.id) {
+        <ion-item-sliding #sliding>
+          <ion-item button detail="false" (click)="riscar(item)">
+            <ion-icon
+              slot="start"
+              class="marcador feito"
+              name="checkmark-circle"
+              aria-hidden="true"
+            />
+            <ion-label>
+              <h2 class="riscado">{{ item.nomeProduto }}</h2>
+              <p>
+                {{ formatarQtd(item.quantidadeComprada ?? 0) }} {{ item.unidade }}
+                @if (item.foraDaLista) {
+                  <span class="marca-extra">extra</span>
+                }
+              </p>
+            </ion-label>
+
+            <!-- Total em destaque; o unitario embaixo e a informacao que
+                 volta na proxima compra, entao merece ficar visivel. -->
+            <div class="valor" slot="end">
+              <strong>{{ totalItem(item) | currency: 'BRL' }}</strong>
+              <ion-note>
+                {{ item.precoUnitario | currency: 'BRL' }}/{{ item.unidade }}
+              </ion-note>
+            </div>
+          </ion-item>
+
+          <ion-item-options side="end">
+            <ion-item-option color="medium" (click)="desfazer(item, sliding)">
+              <ion-icon slot="icon-only" name="arrow-undo-outline" />
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <div class="espaco-rodape"></div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="painel">
+      <div class="numeros">
+        <div class="total">
+          <span>Total no carrinho</span>
+          <strong [class.estourou]="estourou()">{{ total() | currency: 'BRL' }}</strong>
+        </div>
+
+        @if (orcamento() > 0) {
+          <div class="orcamento">
+            <ion-progress-bar
+              [value]="usoOrcamento()"
+              [color]="estourou() ? 'danger' : 'warning'"
+            />
+            <ion-note [class.estourou]="estourou()">
+              @if (estourou()) {
+                {{ -restante() | currency: 'BRL' }} acima do orcamento
+              } @else {
+                {{ restante() | currency: 'BRL' }} restantes de
+                {{ orcamento() | currency: 'BRL' }}
+              }
+            </ion-note>
+          </div>
+        }
+      </div>
+
+      <ion-button (click)="finalizar()" color="success">
+        <ion-icon slot="start" name="checkmark-outline" />
+        Finalizar
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

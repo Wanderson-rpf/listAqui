@@ -1,0 +1,64 @@
+.preco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+
+  strong {
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ion-note {
+    font-size: 0.68rem;
+  }
+}
+
+.tendencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 12px;
+  }
+
+  &.subiu {
+    background: rgba(var(--ion-color-danger-rgb), 0.13);
+    color: var(--ion-color-danger);
+  }
+
+  &.caiu {
+    background: rgba(var(--ion-color-success-rgb), 0.13);
+    color: var(--ion-color-success);
+  }
+}
+
+.vazio {
+  padding: 64px 32px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 60px;
+    color: var(--ion-color-medium);
+    opacity: 0.35;
+  }
+
+  h2 {
+    margin: 16px 0 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ion-color-medium);
+  }
+}

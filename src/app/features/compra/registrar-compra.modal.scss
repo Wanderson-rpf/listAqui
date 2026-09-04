@@ -1,0 +1,103 @@
+/**
+ * Tudo nesta tela se alinha na mesma margem de 16px - a mesma que o
+ * `ion-list[inset]` usa. Antes o ion-content tinha `ion-padding` e a lista
+ * somava a margem dela por cima, entao os campos ficavam mais estreitos
+ * que o resto do conteudo.
+ */
+ion-segment {
+  margin: 8px 16px 0;
+}
+
+.explicacao {
+  display: block;
+  padding: 10px 16px 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+ion-list[inset] {
+  margin-top: 12px;
+}
+
+// So o valor digitado cresce; o rotulo continua no tamanho normal.
+ion-input {
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 16px;
+  margin: 12px 16px 0;
+  border-radius: 16px;
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+
+  span {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+  }
+
+  strong {
+    font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ion-color-primary);
+  }
+
+  ion-note {
+    margin-top: 2px;
+    font-size: 0.75rem;
+  }
+}
+
+.variacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  &-subiu {
+    background: rgba(var(--ion-color-danger-rgb), 0.12);
+    color: var(--ion-color-danger);
+  }
+  &-caiu {
+    background: rgba(var(--ion-color-success-rgb), 0.12);
+    color: var(--ion-color-success);
+  }
+  &-igual {
+    background: rgba(var(--ion-color-medium-rgb), 0.14);
+    color: var(--ion-color-medium);
+  }
+}
+
+.variacao ion-icon {
+  font-size: 20px;
+}
+
+// Folga para o ultimo bloco nao encostar no rodape fixo ao rolar.
+.espaco-rodape {
+  height: 16px;
+}
+
+.confirmar {
+  margin: 6px 16px;
+  --border-radius: 14px;
+  height: 48px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}

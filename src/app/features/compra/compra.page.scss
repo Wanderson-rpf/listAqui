@@ -1,0 +1,246 @@
+/**
+ * Titulo de secao solto sobre o fundo, fora da lista: o ion-list-header
+ * reserva altura para um titulo grande e criava um degrau vazio no topo
+ * de cada bloco.
+ */
+.secao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 22px 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ion-color-medium);
+
+  .contador {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.08);
+    font-size: 0.72rem;
+    letter-spacing: 0;
+  }
+
+  /**
+   * O gesto de arrastar para desfazer nao tem nenhuma pista visual, e
+   * marcar item errado no corredor acontece. Fica na propria linha do
+   * titulo para nao custar altura na tela mais usada do app.
+   */
+  .dica-secao {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-inline-start: auto;
+    font-size: 0.68rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.75;
+
+    ion-icon {
+      font-size: 13px;
+    }
+  }
+}
+
+/**
+ * 56px acomoda as duas linhas (nome + quantidade) sem sobra: com 60px o
+ * conteudo boiava no meio da linha e a lista parecia esticada.
+ */
+ion-item {
+  --min-height: 56px;
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+
+  h2 {
+    font-size: 0.97rem;
+    font-weight: 500;
+  }
+
+  p {
+    margin-top: 2px;
+    font-size: 0.8rem;
+  }
+}
+
+/**
+ * Circulo no lugar do ion-checkbox, que no modo md e um quadrado - e que
+ * aqui nem funcionava como caixa de selecao (o clique abria o modal).
+ * Vazio quando falta pegar, preenchido quando ja esta no carrinho.
+ */
+.marcador {
+  margin-inline-end: 14px;
+  font-size: 22px;
+  color: var(--ion-color-medium);
+  opacity: 0.55;
+
+  &.feito {
+    color: var(--ion-color-success);
+    opacity: 1;
+  }
+}
+
+.seta {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  opacity: 0.45;
+}
+
+.riscado {
+  text-decoration: line-through;
+  color: var(--ion-color-medium);
+}
+
+.lista-comprados ion-item {
+  // Ver nota em lista.page.scss: o degrau antigo do Ionic caia num
+  // fallback claro fixo e sumia com o texto no tema escuro.
+  --background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.04);
+}
+
+.valor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.25;
+
+  strong {
+    font-size: 0.98rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ion-note {
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+}
+
+/**
+ * Etiqueta de "nao estava na lista". Laranja para destacar o gasto que
+ * nao estava planejado, no tamanho compacto que cabe na linha da
+ * quantidade sem empurrar a altura do item.
+ */
+.marca-extra {
+  display: inline-block;
+  margin-inline-start: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(var(--ion-color-warning-rgb), 0.16);
+  color: var(--ion-color-warning);
+  font-size: 0.64rem;
+  line-height: 1.35;
+  vertical-align: 1px;
+}
+
+/**
+ * O laranja da paleta e escuro de proposito, para ler bem sob luz de
+ * supermercado em fundo claro. No tema escuro ele precisa clarear, senao
+ * vira texto escuro sobre fundo escuro.
+ */
+@media (prefers-color-scheme: dark) {
+  .marca-extra {
+    background: rgba(232, 162, 94, 0.16);
+    color: #e8a25e;
+  }
+}
+
+.tudo-pronto {
+  padding: 48px 32px 24px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 56px;
+    color: var(--ion-color-success);
+    opacity: 0.5;
+  }
+
+  h2 {
+    margin: 14px 0 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Respiro no fim da rolagem, para o ultimo item nao encostar no painel.
+.espaco-rodape {
+  height: 24px;
+}
+
+.painel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+
+  .numeros {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .total {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+
+    span {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ion-color-medium);
+    }
+
+    strong {
+      font-size: 1.4rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .estourou {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  .orcamento {
+    margin-top: 7px;
+
+    ion-progress-bar {
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    ion-note {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.7rem;
+      line-height: 1.3;
+    }
+
+    .estourou {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  /**
+   * Largura minima fixa: sem ela o botao encolhia quando o total ficava
+   * longo, e crescia de volta ao apagar um item - o rodape "respirava"
+   * a cada compra registrada.
+   */
+  ion-button {
+    flex-shrink: 0;
+    min-width: 128px;
+    margin: 0;
+    --border-radius: 12px;
+    --padding-start: 14px;
+    --padding-end: 14px;
+    height: 44px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}

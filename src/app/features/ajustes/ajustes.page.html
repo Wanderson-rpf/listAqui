@@ -1,0 +1,101 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajustes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="cartoes">
+    <div class="cartao">
+      <strong>{{ totalCompras() }}</strong>
+      <span>compras</span>
+    </div>
+    <div class="cartao">
+      <strong>{{ totalItens() }}</strong>
+      <span>itens</span>
+    </div>
+    <div class="cartao">
+      <strong>{{ totalProdutos() }}</strong>
+      <span>produtos</span>
+    </div>
+  </div>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Relatorios</ion-label>
+    </ion-list-header>
+
+    <ion-item button detail="false" (click)="exportarItens()">
+      <ion-icon slot="start" name="document-text-outline" color="primary" />
+      <ion-label>
+        <h2>Exportar itens (CSV)</h2>
+        <p>Uma linha por produto comprado, com quantidade e preco</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item button detail="false" (click)="exportarCompras()">
+      <ion-icon slot="start" name="stats-chart-outline" color="primary" />
+      <ion-label>
+        <h2>Exportar compras (CSV)</h2>
+        <p>Uma linha por compra, com o total gasto</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-note class="dica">
+    Os arquivos abrem direto no Excel ou no Google Sheets, com virgula decimal e acentuacao
+    corretas.
+  </ion-note>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Backup</ion-label>
+    </ion-list-header>
+
+    <ion-item button detail="false" (click)="exportarBackup()">
+      <ion-icon slot="start" name="cloud-download-outline" color="success" />
+      <ion-label>
+        <h2>Salvar backup (JSON)</h2>
+        <p>Copia completa dos dados, para restaurar depois</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item button detail="false" (click)="importarBackup()">
+      <ion-icon slot="start" name="cloud-upload-outline" color="success" />
+      <ion-label>
+        <h2>Restaurar backup</h2>
+        <p>Substitui tudo pelo conteudo de um arquivo salvo</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="aviso">
+    <ion-icon name="warning-outline" />
+    <div>
+      <strong>Os dados ficam so neste aparelho.</strong>
+      Nada e enviado para nenhum servidor. Se voce trocar de celular, formatar ou limpar os
+      dados do navegador, o historico vai junto. Salve um backup de vez em quando.
+    </div>
+  </div>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Zona de risco</ion-label>
+    </ion-list-header>
+
+    <ion-item lines="none">
+      <ion-label>
+        <h2>Apagar todos os dados</h2>
+        <p>Remove listas, produtos e historico deste aparelho</p>
+      </ion-label>
+    </ion-item>
+    <div class="botao-perigo">
+      <ion-button expand="block" color="danger" fill="outline" (click)="apagarTudo()">
+        <ion-icon slot="start" name="trash-outline" />
+        Apagar tudo
+      </ion-button>
+    </div>
+  </ion-list>
+
+  <p class="versao">ListAqui &middot; versao 1.0.0</p>
+</ion-content>

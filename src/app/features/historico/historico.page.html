@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Historico</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (!carregando() && grupos().length === 0) {
+    <div class="vazio">
+      <ion-icon name="time-outline" />
+      <h2>Nada no historico ainda</h2>
+      <p>Quando voce finalizar sua primeira compra, ela aparece aqui com o total gasto.</p>
+    </div>
+  } @else if (grupos().length) {
+    <div class="resumo">
+      <span>{{ rotuloResumo() }}</span>
+      <strong>{{ totalMesAtual() | currency: 'BRL' }}</strong>
+      <ion-note>
+        {{ comprasMesAtual() }} {{ comprasMesAtual() === 1 ? 'compra' : 'compras' }}
+      </ion-note>
+    </div>
+  }
+
+  @for (grupo of grupos(); track grupo.chave) {
+    <div class="cabecalho-mes">
+      <span class="mes">{{ grupo.rotulo }}</span>
+      <span class="total-mes">{{ grupo.total | currency: 'BRL' }}</span>
+    </div>
+
+    <ion-accordion-group>
+      @for (compra of grupo.compras; track compra.lista.id) {
+        <ion-accordion [value]="'c' + compra.lista.id">
+          <ion-item slot="header">
+            <div class="marca" [class]="'marca-' + cor(compra.lista)" slot="start">
+              <ion-icon [name]="icone(compra.lista)" />
+            </div>
+
+            <ion-label>
+              <h2>{{ compra.lista.nome }}</h2>
+              <p>
+                {{ compra.lista.finalizadaEm | date: "dd/MM 'as' HH:mm" }}
+                @if (compra.lista.local) {
+                  <span> &middot; {{ compra.lista.local }}</span>
+                }
+              </p>
+            </ion-label>
+
+            <div class="direita" slot="end">
+              <strong>{{ compra.lista.totalGasto | currency: 'BRL' }}</strong>
+              <ion-note>{{ compra.itens.length }} itens</ion-note>
+            </div>
+          </ion-item>
+
+          <div class="detalhe" slot="content">
+            <ion-list lines="none">
+              @for (item of compra.itens; track item.id) {
+                <ion-item>
+                  <ion-label>
+                    <h3>{{ item.nomeProduto }}</h3>
+                    <p>
+                      {{ formatarQtd(item.quantidadeComprada) }} {{ item.unidade }} &times;
+                      {{ item.precoUnitario | currency: 'BRL' }}
+                    </p>
+                  </ion-label>
+                  <ion-note slot="end">{{ totalItem(item) | currency: 'BRL' }}</ion-note>
+                </ion-item>
+              }
+            </ion-list>
+
+            @if (compra.lista.orcamento) {
+              <div class="nota-orcamento">
+                <ion-icon name="wallet-outline" />
+                Orcamento era {{ compra.lista.orcamento | currency: 'BRL' }}
+                @if ((compra.lista.totalGasto ?? 0) > compra.lista.orcamento) {
+                  <ion-badge color="danger">estourou</ion-badge>
+                } @else {
+                  <ion-badge color="success">dentro</ion-badge>
+                }
+              </div>
+            }
+
+            <div class="acoes">
+              <ion-button fill="clear" size="small" (click)="repetir(compra, $event)">
+                <ion-icon slot="start" name="copy-outline" />
+                Repetir lista
+              </ion-button>
+              <ion-button
+                fill="clear"
+                size="small"
+                color="danger"
+                (click)="excluir(compra, $event)"
+              >
+                <ion-icon slot="start" name="trash-outline" />
+                Excluir
+              </ion-button>
+            </div>
+          </div>
+        </ion-accordion>
+      }
+    </ion-accordion-group>
+  }
+</ion-content>

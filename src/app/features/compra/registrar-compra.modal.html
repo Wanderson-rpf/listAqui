@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ item.nomeProduto }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()" aria-label="Cancelar">
+        <ion-icon slot="icon-only" name="close-outline" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-segment [value]="modo()" (ionChange)="trocarModo($any($event.detail.value))">
+    <ion-segment-button value="unitario">
+      <ion-label>Preco por {{ item.unidade }}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="total">
+      <ion-label>Total pago</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-note class="explicacao">
+    @if (modo() === 'unitario') {
+      Use quando o preco esta na etiqueta da prateleira.
+    } @else {
+      Use para itens pesados na balanca: digite o valor impresso na etiqueta.
+    }
+  </ion-note>
+
+  <ion-list inset>
+    <ion-item>
+      <ion-input
+        [label]="'Quantidade (' + item.unidade + ')'"
+        labelPlacement="stacked"
+        type="number"
+        inputmode="decimal"
+        [value]="quantidade()"
+        (ionInput)="quantidade.set($any($event.target).value)"
+      />
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        [label]="modo() === 'unitario' ? 'Preco por ' + item.unidade : 'Total pago'"
+        labelPlacement="stacked"
+        [(moeda)]="valor"
+        (keyup.enter)="confirmar()"
+      />
+    </ion-item>
+  </ion-list>
+
+  <div class="resultado">
+    <span>Total deste item</span>
+    <strong>{{ total() | currency: 'BRL' }}</strong>
+    @if (modo() === 'total' && qtdNum() > 0 && precoUnitario() > 0) {
+      <ion-note>
+        Equivale a {{ precoUnitario() | currency: 'BRL' }} por {{ item.unidade }}
+      </ion-note>
+    }
+  </div>
+
+  @if (variacao(); as v) {
+    <div class="variacao" [class]="'variacao-' + v.tipo">
+      @if (v.tipo === 'subiu') {
+        <ion-icon name="trending-up-outline" />
+        <span>
+          <strong>{{ v.percentual | number: '1.0-0' }}% mais caro</strong>
+          que da ultima vez ({{ v.anterior | currency: 'BRL' }})
+        </span>
+      } @else if (v.tipo === 'caiu') {
+        <ion-icon name="trending-down-outline" />
+        <span>
+          <strong>{{ v.percentual | number: '1.0-0' }}% mais barato</strong>
+          que da ultima vez ({{ v.anterior | currency: 'BRL' }})
+        </span>
+      } @else {
+        <ion-icon name="checkmark-outline" />
+        <span>Mesmo preco da ultima compra</span>
+      }
+    </div>
+  }
+
+  <div class="espaco-rodape"></div>
+</ion-content>
+
+<!-- Fixo no rodape: com o teclado aberto o botao continua ao alcance do polegar. -->
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" class="confirmar" (click)="confirmar()" [disabled]="!valido()">
+      <ion-icon slot="start" name="checkmark-outline" />
+      No carrinho
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

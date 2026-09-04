@@ -1,0 +1,23 @@
+# Dependencias
+/node_modules
+
+# Build
+/dist
+/.angular/cache
+/tmp
+/out-tsc
+
+# Ambiente
+.env
+.env.local
+
+# Editores
+.idea
+*.swp
+.DS_Store
+Thumbs.db
+
+# Artefatos de teste
+/test-results
+captura-*.png
+shot-*.png
