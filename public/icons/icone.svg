@@ -1,0 +1,26 @@
+<!--
+  Icone do ListAqui: lista com o primeiro item ja riscado.
+
+  O check e a barra apagada contam a ideia central do app - riscar o item
+  E o registro da compra. Os dois itens pendentes abaixo dao o contexto de
+  lista sem virar desenho ocupado, que some no tamanho do launcher.
+
+  Fonte de verdade do icone. Os PNGs sao gerados a partir daqui por
+  `node gerar-icones.mjs` (ver README).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#0f766e" />
+
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Item comprado: check solido, barra apagada. -->
+    <path d="M142 178 l28 30 l54 -60" stroke-width="30" />
+    <line x1="264" y1="180" x2="392" y2="180" stroke-width="26" opacity="0.4" />
+
+    <!-- Itens pendentes: marcador vazio, barra cheia. -->
+    <circle cx="172" cy="264" r="26" stroke-width="16" />
+    <line x1="264" y1="264" x2="392" y2="264" stroke-width="26" />
+
+    <circle cx="172" cy="350" r="26" stroke-width="16" />
+    <line x1="264" y1="350" x2="352" y2="350" stroke-width="26" />
+  </g>
+</svg>

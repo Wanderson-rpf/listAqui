@@ -1,0 +1,30 @@
+<!--
+  Versao maskable do icone: o Android recorta o icone na forma que o
+  fabricante escolher (circulo, squircle, gota). Por isso duas diferencas
+  em relacao ao icone normal:
+
+  1. O fundo sangra ate a borda, sem cantos arredondados - quem arredonda
+     e o sistema.
+  2. O desenho e reduzido para caber na "safe zone": o circulo central de
+     80% do canvas, unico trecho que nenhum recorte corta.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#0f766e" />
+
+  <g
+    fill="none"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    transform="translate(256 256) scale(0.86) translate(-256 -256)"
+  >
+    <path d="M142 178 l28 30 l54 -60" stroke-width="30" />
+    <line x1="264" y1="180" x2="392" y2="180" stroke-width="26" opacity="0.4" />
+
+    <circle cx="172" cy="264" r="26" stroke-width="16" />
+    <line x1="264" y1="264" x2="392" y2="264" stroke-width="26" />
+
+    <circle cx="172" cy="350" r="26" stroke-width="16" />
+    <line x1="264" y1="350" x2="352" y2="350" stroke-width="26" />
+  </g>
+</svg>
