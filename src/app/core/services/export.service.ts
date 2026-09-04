@@ -121,7 +121,9 @@ export class ExportService {
     }
 
     if (dados?.formato !== 'compras-app') {
-      throw new Error('Este arquivo nao e um backup do Minhas Compras.');
+      // O identificador gravado no arquivo continua sendo `compras-app`:
+      // mudar quebraria os backups que o usuario ja tem guardados.
+      throw new Error('Este arquivo nao e um backup do ListAqui.');
     }
     if (!Array.isArray(dados.listas) || !Array.isArray(dados.itens)) {
       throw new Error('Backup incompleto ou corrompido.');

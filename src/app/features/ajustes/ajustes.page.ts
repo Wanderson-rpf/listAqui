@@ -100,11 +100,17 @@ export class AjustesPage {
   /**
    * Abre o seletor de arquivo do sistema.
    * Um input escondido evita depender de plugin nativo neste estagio.
+   *
+   * Sem filtro de tipo de proposito: um backup que chegou por WhatsApp ou
+   * Telegram costuma ser registrado pelo Android como
+   * application/octet-stream, e com `accept` de JSON ele aparece esmaecido
+   * no seletor - a pessoa ve o arquivo e nao consegue tocar nele. Quem
+   * valida de verdade e restaurarBackup(), que rejeita o que nao tiver a
+   * marca do formato.
    */
   importarBackup(): void {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'application/json,.json';
 
     input.onchange = async () => {
       const arquivo = input.files?.[0];
