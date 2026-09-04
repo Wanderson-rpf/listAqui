@@ -131,6 +131,31 @@ Marque sempre o `enterkeyhint` (`next` no meio, `done` no último). Em
 depois do `present()`. Campo de texto longo (`ion-textarea`) fica de fora: ali
 o Enter é quebra de linha.
 
+## Versionamento — SemVer
+
+A versão vive em **`package.json`** e é a fonte única. Toda alteração publicada
+incrementa a versão no mesmo commit da mudança.
+
+`MAJOR.MINOR.PATCH`, com estes critérios — o app não tem API pública, então o
+contrato que importa é **o dado do usuário e o fluxo de compra**:
+
+| Parte | Quando incrementa | Exemplos |
+|---|---|---|
+| **MAJOR** | Quebra dados ou obriga o usuário a reaprender o fluxo | mudar o `formato` do arquivo de backup; schema do Dexie que exija migração; trocar o modelo de riscar item |
+| **MINOR** | Funcionalidade nova, compatível com o que já existe | ordenar por setor; listas recorrentes; leitura de código de barras |
+| **PATCH** | Correção, ajuste visual, texto, refatoração interna | contraste no tema escuro; máscara de moeda num campo; aba com dados velhos |
+
+Regras práticas:
+
+- **Uma versão por entrega publicada**, não por commit solto. Vários ajustes que
+  vão juntos no mesmo push compartilham a versão; se houver correção e feature
+  no lote, vale o maior (MINOR ganha de PATCH).
+- **Tag no git** a cada versão publicada: `git tag v1.2.0 && git push --tags`.
+  É o que permite responder "o que exatamente está no celular?".
+- **Backup é contrato.** O campo `formato: 'compras-app'` e o `versao` dentro do
+  arquivo são independentes da versão do app: um backup antigo precisa continuar
+  restaurável. Mudar isso é MAJOR, e exige código que leia o formato antigo.
+
 ## Armadilhas já encontradas (não repita)
 
 **`ion-tabs` já cria o próprio `ion-router-outlet`.** Declarar outro dentro dele
