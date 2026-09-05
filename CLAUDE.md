@@ -204,14 +204,9 @@ Funcionando: montar lista, modo compra com total corrente, autocomplete de
 produtos, comparação com o último preço pago, item fora da lista, histórico por
 mês, evolução de preço por produto, exportação CSV e backup JSON.
 
-Ainda não feito, em ordem de valor percebido:
-
-1. Ordenar a lista por setor do mercado (evita ir e voltar entre corredores)
-2. Acentuação nos textos da UI (hoje está sem, por herança do bootstrap inicial)
-3. Listas recorrentes / modelo fixo
-4. Leitura de código de barras pela câmera
-5. Capacitor para gerar APK e publicar na Play Store
-6. Backend opcional com sincronização — é aqui que os repositórios abstratos pagam
+O que falta fazer mora em **[BACKLOG.md](BACKLOG.md)** — funcionalidades,
+melhorias de uso e dívida técnica, cada item com o porquê. Mantenha lá, não
+aqui: duas listas de pendências divergem em uma semana.
 
 ## Limitação que o usuário precisa saber
 
