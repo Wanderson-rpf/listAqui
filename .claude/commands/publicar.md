@@ -34,17 +34,31 @@ MAJOR significa que alguém pode perder dado, e isso é decisão dele.
 
 ## 3. Aplicar a versão
 
-- Edite `version` no `package.json`
-- Sincronize o lock: `npm install --package-lock-only`
-  (nunca `npm install` puro aqui — ele mexeria nas dependências)
+Use **`npm version X.Y.Z --no-git-tag-version`**. Esse comando altera só o
+campo `version` no `package.json` e no `package-lock.json`.
+
+**Nunca use `npm install --package-lock-only` para isso.** Ele recalcula a
+árvore de dependências, e no Windows descarta pacotes `optional` + `peer` que
+só entram na resolução do Linux (`@emnapi/core`, `@emnapi/runtime`). O lock
+fica válido aqui e quebra o `npm ci` do runner com `EUSAGE`. Já aconteceu duas
+vezes.
 
 ## 4. Validar antes de publicar
 
-- `npm run build` — só siga se terminar em "Application bundle generation complete"
-- Se a mudança tocou fluxo de compra ou cálculo, avise que o e2e deveria rodar
-  (e que o Playwright não está instalado nesta máquina, se continuar assim)
+Rode **na ordem**, e só siga se ambos passarem:
 
-Build quebrado: pare, conserte ou relate. Nunca publique sem build limpo.
+1. `npm ci` — reproduz o que o runner faz e é o **único** jeito de flagrar lock
+   fora de sincronia. `npm run build` sozinho não pega isso: ele usa o
+   `node_modules` já instalado e nunca lê o lock.
+   Pare o dev server antes: o `npm ci` apaga o `node_modules` e falha por
+   permissão se houver um `ng serve` segurando arquivos.
+2. `npm run build` — precisa terminar em "Application bundle generation complete"
+
+Se a mudança tocou fluxo de compra ou cálculo, avise que o e2e deveria rodar
+(e que o Playwright não está instalado nesta máquina, se continuar assim).
+
+Qualquer um dos dois falhando: pare, conserte ou relate. Nunca publique sem
+`npm ci` e build limpos.
 
 ## 5. Commitar
 
