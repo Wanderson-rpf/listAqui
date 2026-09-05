@@ -5,8 +5,11 @@
     </ion-buttons>
     <ion-title>{{ lista()?.nome }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="adicionarNaHora()" aria-label="Item fora da lista">
+      <ion-button (click)="adicionarItem()" aria-label="Adicionar item">
         <ion-icon slot="icon-only" name="add-circle-outline" />
+      </ion-button>
+      <ion-button (click)="voltarParaMontagem()" aria-label="Voltar para montagem">
+        <ion-icon slot="icon-only" name="create-outline" />
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -18,23 +21,40 @@
     <div class="secao">
       <span>Faltam pegar</span>
       <span class="contador">{{ pendentes().length }}</span>
+      <span class="dica-secao">
+        <ion-icon name="arrow-back-outline" aria-hidden="true" />
+        arraste para editar
+      </span>
     </div>
 
     <ion-list [inset]="true" lines="inset" class="lista-pendentes">
       @for (item of pendentes(); track item.id) {
-        <ion-item button detail="false" (click)="riscar(item)">
-          <ion-icon slot="start" class="marcador" name="ellipse-outline" aria-hidden="true" />
-          <ion-label>
-            <h2>{{ item.nomeProduto }}</h2>
-            <p>
-              {{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}
-              @if (item.observacao) {
-                <span> &middot; {{ item.observacao }}</span>
-              }
-            </p>
-          </ion-label>
-          <ion-icon slot="end" class="seta" name="chevron-forward-outline" aria-hidden="true" />
-        </ion-item>
+        <ion-item-sliding #slidingPendente>
+          <ion-item button detail="false" (click)="riscar(item)">
+            <ion-icon slot="start" class="marcador" name="ellipse-outline" aria-hidden="true" />
+            <ion-label>
+              <h2>{{ item.nomeProduto }}</h2>
+              <p>
+                {{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}
+                @if (item.observacao) {
+                  <span> &middot; {{ item.observacao }}</span>
+                }
+              </p>
+            </ion-label>
+            <ion-icon slot="end" class="seta" name="chevron-forward-outline" aria-hidden="true" />
+          </ion-item>
+
+          <!-- Tocar no item registra a compra, entao editar e remover ficam
+               no gesto: no corredor o toque errado nao pode custar caro. -->
+          <ion-item-options side="end">
+            <ion-item-option color="medium" (click)="editar(item, slidingPendente)">
+              <ion-icon slot="icon-only" name="create-outline" />
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="remover(item, slidingPendente)">
+              <ion-icon slot="icon-only" name="trash-outline" />
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
       }
     </ion-list>
   } @else {

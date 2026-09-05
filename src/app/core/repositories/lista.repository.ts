@@ -56,6 +56,14 @@ export abstract class ListaRepository {
   abstract finalizar(listaId: number): Promise<void>;
   abstract reabrir(listaId: number): Promise<void>;
 
+  /**
+   * Desfaz o inicio da compra, devolvendo a lista para montagem.
+   * Para quem tocou em "comecar a comprar" sem querer - sem isso a unica
+   * saida era finalizar e sujar o historico com uma compra que nao houve.
+   * Itens ja registrados sao preservados: quem volta pode retomar depois.
+   */
+  abstract voltarParaMontagem(listaId: number): Promise<void>;
+
   // --- consultas ---
   abstract resumo(listaId: number): Promise<ResumoCompra>;
   abstract historicoPreco(produtoId: number): Promise<RegistroPreco[]>;

@@ -160,6 +160,10 @@ export class DexieListaRepository extends ListaRepository {
     });
   }
 
+  async voltarParaMontagem(listaId: number): Promise<void> {
+    await db.listas.update(listaId, { status: 'montando', iniciadaEm: undefined });
+  }
+
   async reabrir(listaId: number): Promise<void> {
     await db.listas.update(listaId, {
       status: 'comprando',

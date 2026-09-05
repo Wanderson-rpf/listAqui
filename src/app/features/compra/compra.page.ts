@@ -2,6 +2,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  ActionSheetController,
   AlertController,
   IonBackButton,
   IonButton,
@@ -27,6 +28,7 @@ import { enviarNoEnter } from '../../core/formulario/enviar-no-enter';
 import { ItemLista, Lista, arredondar, totalDoItem } from '../../core/models/lista.model';
 import { ListaRepository } from '../../core/repositories/lista.repository';
 import { ProdutoRepository } from '../../core/repositories/produto.repository';
+import { DadosItemEditado, ItemFormModal } from '../lista/item-form.modal';
 import { DadosCompraItem, RegistrarCompraModal } from './registrar-compra.modal';
 
 @Component({
@@ -60,6 +62,7 @@ export class CompraPage {
   private readonly modalCtrl = inject(ModalController);
   private readonly toastCtrl = inject(ToastController);
   private readonly alertCtrl = inject(AlertController);
+  private readonly actionSheetCtrl = inject(ActionSheetController);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -148,12 +151,37 @@ export class CompraPage {
     await toast.present();
   }
 
-  // ------------------------------------------------- item fora da lista
+  // ----------------------------------------------- adicionar durante a compra
 
-  async adicionarNaHora(): Promise<void> {
+  /**
+   * Duas coisas diferentes acontecem no corredor: lembrar de algo que ainda
+   * precisa pegar, e jogar no carrinho algo que nem estava na lista. Antes
+   * so a segunda existia, entao lembrar de um item obrigava a "comprar" ele
+   * na hora - ou anotar em outro lugar.
+   */
+  async adicionarItem(): Promise<void> {
+    const escolha = await this.actionSheetCtrl.create({
+      header: 'Adicionar item',
+      buttons: [
+        { text: 'Ja peguei (registrar preco)', icon: 'cart-outline', role: 'agora' },
+        { text: 'Ainda vou pegar', icon: 'ellipse-outline', role: 'depois' },
+        { text: 'Cancelar', role: 'cancel' },
+      ],
+    });
+    await escolha.present();
+
+    const { role } = await escolha.onWillDismiss();
+    if (role !== 'agora' && role !== 'depois') return;
+
+    await this.perguntarNome(role === 'agora');
+  }
+
+  private async perguntarNome(riscarEmSeguida: boolean): Promise<void> {
     const alert = await this.alertCtrl.create({
-      header: 'Item fora da lista',
-      message: 'Algo que voce pegou sem ter planejado.',
+      header: riscarEmSeguida ? 'Item fora da lista' : 'Novo item',
+      message: riscarEmSeguida
+        ? 'Algo que voce pegou sem ter planejado.'
+        : 'Entra na lista de pendentes, para voce riscar quando pegar.',
       inputs: [{ name: 'nome', placeholder: 'Nome do produto' }],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -164,7 +192,7 @@ export class CompraPage {
             // false mantem o alerta aberto: fechar sem nome perderia o que
             // o usuario ja tinha digitado.
             if (!nome) return false;
-            await this.criarItemExtra(nome);
+            await this.criarItem(nome, riscarEmSeguida);
             return true;
           },
         },
@@ -176,12 +204,16 @@ export class CompraPage {
     enviarNoEnter(alert, async ([nome]) => {
       if (!nome.trim()) return;
       await alert.dismiss();
-      await this.criarItemExtra(nome.trim());
+      await this.criarItem(nome.trim(), riscarEmSeguida);
     });
   }
 
-  /** Cria o produto, joga na lista e ja abre o registro de preco. */
-  private async criarItemExtra(nome: string): Promise<void> {
+  /**
+   * Cria o produto e joga na lista. Nos dois casos o item nasce marcado
+   * como fora da lista: entrou depois que a compra ja tinha comecado, e e
+   * isso que a coluna "Fora da lista" do CSV precisa registrar.
+   */
+  private async criarItem(nome: string, riscarEmSeguida: boolean): Promise<void> {
     const produto = await this.produtoRepo.obterOuCriar(nome, 'un');
     const itemId = await this.listaRepo.adicionarItem({
       listaId: this.listaId,
@@ -193,8 +225,74 @@ export class CompraPage {
     });
 
     await this.carregar();
+    if (!riscarEmSeguida) return;
+
     const novo = this.itens().find((i) => i.id === itemId);
     if (novo) await this.riscar(novo);
+  }
+
+  // -------------------------------------------------- editar item pendente
+
+  /** Mesmo modal da tela de montagem: nome, quantidade, unidade, observacao. */
+  async editar(item: ItemLista, sliding?: IonItemSliding): Promise<void> {
+    await sliding?.close();
+
+    const modal = await this.modalCtrl.create({
+      component: ItemFormModal,
+      componentProps: { item },
+    });
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss<DadosItemEditado>();
+    if (role !== 'confirm' || !data) return;
+
+    // Trocar o nome significa apontar para outro produto no catalogo.
+    const produto = await this.produtoRepo.obterOuCriar(data.nomeProduto, data.unidade);
+
+    await this.listaRepo.atualizarItem(item.id!, {
+      produtoId: produto.id!,
+      nomeProduto: data.nomeProduto,
+      quantidadePlanejada: data.quantidadePlanejada,
+      unidade: data.unidade,
+      observacao: data.observacao,
+    });
+    await this.carregar();
+  }
+
+  async remover(item: ItemLista, sliding: IonItemSliding): Promise<void> {
+    await sliding.close();
+    await this.listaRepo.removerItem(item.id!);
+    await this.carregar();
+  }
+
+  // ------------------------------------------------------ sair da compra
+
+  /**
+   * Saida para quem comecou a compra sem querer. Finalizar era a unica
+   * porta, e ela grava a compra no historico - inclusive uma de R$ 0,00.
+   */
+  async voltarParaMontagem(): Promise<void> {
+    const registrados = this.comprados().length;
+
+    const alert = await this.alertCtrl.create({
+      header: 'Voltar para montagem',
+      message: registrados
+        ? `A lista volta a ser editavel e nada vai para o historico. ` +
+          `${registrados} ${registrados === 1 ? 'item ja marcado continua' : 'itens ja marcados continuam'} ` +
+          `com o preco registrado, e voce retoma de onde parou.`
+        : 'A lista volta a ser editavel e nada vai para o historico.',
+      buttons: [
+        { text: 'Continuar comprando', role: 'cancel' },
+        {
+          text: 'Voltar',
+          handler: async () => {
+            await this.listaRepo.voltarParaMontagem(this.listaId);
+            await this.router.navigate(['/listas', this.listaId], { replaceUrl: true });
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   // ------------------------------------------------------------ finalizar
