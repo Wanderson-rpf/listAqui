@@ -80,6 +80,16 @@ ion-item p {
   padding: 4px 14px 14px;
 }
 
+.botao-atualizar {
+  padding: 4px 14px 14px;
+
+  ion-button {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+}
+
 .versao {
   padding: 8px 16px 28px;
   text-align: center;

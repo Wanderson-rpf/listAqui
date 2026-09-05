@@ -14,6 +14,19 @@
     <ion-refresher-content />
   </ion-refresher>
 
+  <!-- Aviso aqui e nao no modo compra: recarregar o app no meio do corredor,
+       com itens sendo riscados, e exatamente o que se quer evitar. -->
+  @if (atualizacao.disponivel()) {
+    <div class="nova-versao">
+      <ion-icon name="cloud-download-outline" aria-hidden="true" />
+      <div class="texto">
+        <strong>Nova versao disponivel</strong>
+        <span>Atualize antes de comecar a proxima compra.</span>
+      </div>
+      <ion-button size="small" (click)="aplicarAtualizacao()">Atualizar</ion-button>
+    </div>
+  }
+
   @if (!carregando() && itens().length === 0) {
     <div class="vazio">
       <ion-icon name="basket-outline" />

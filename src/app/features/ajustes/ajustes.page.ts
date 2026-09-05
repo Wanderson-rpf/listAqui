@@ -15,6 +15,7 @@ import {
   LoadingController,
   ToastController,
 } from '@ionic/angular';
+import { AtualizacaoService } from '../../core/atualizacao/atualizacao.service';
 import { db } from '../../core/db/app-db';
 import { ExportService } from '../../core/services/export.service';
 
@@ -42,9 +43,13 @@ export class AjustesPage {
   private readonly alertCtrl = inject(AlertController);
   private readonly loadingCtrl = inject(LoadingController);
 
+  /** Publico: o template le versao e disponibilidade direto do servico. */
+  readonly atualizacao = inject(AtualizacaoService);
+
   readonly totalProdutos = signal(0);
   readonly totalCompras = signal(0);
   readonly totalItens = signal(0);
+  readonly procurando = signal(false);
 
   ionViewWillEnter(): void {
     void this.contar();
@@ -59,6 +64,33 @@ export class AjustesPage {
     this.totalProdutos.set(produtos);
     this.totalCompras.set(listas);
     this.totalItens.set(itens);
+  }
+
+  // -------------------------------------------------------- atualizacao
+
+  async procurarAtualizacao(): Promise<void> {
+    if (!this.atualizacao.ativo) {
+      await this.avisar('Atualizacao so funciona no app publicado.', 'warning');
+      return;
+    }
+
+    this.procurando.set(true);
+    try {
+      const achou = await this.atualizacao.procurar();
+      if (!achou) await this.avisar('Voce ja esta na versao mais recente.');
+    } catch {
+      // Sem rede a checagem falha, e isso e esperado dentro do mercado.
+      await this.avisar('Nao consegui verificar. Precisa de internet.', 'warning');
+    } finally {
+      this.procurando.set(false);
+    }
+  }
+
+  async atualizar(): Promise<void> {
+    const loading = await this.loadingCtrl.create({ message: 'Atualizando...' });
+    await loading.present();
+    // Nao fecha o loading: aplicar() recarrega a pagina inteira.
+    await this.atualizacao.aplicar();
   }
 
   // ---------------------------------------------------------------- CSV

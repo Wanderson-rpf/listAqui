@@ -27,6 +27,7 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular';
+import { AtualizacaoService } from '../../core/atualizacao/atualizacao.service';
 import { Lista, definicaoTipo } from '../../core/models/lista.model';
 import { recarregarAoVoltarDeFora } from '../../core/navegacao/recarregar-ao-voltar';
 import { ListaRepository, ResumoCompra } from '../../core/repositories/lista.repository';
@@ -73,6 +74,8 @@ export class ComprasPage {
   private readonly toastCtrl = inject(ToastController);
   private readonly router = inject(Router);
 
+  readonly atualizacao = inject(AtualizacaoService);
+
   readonly itens = signal<ListaComResumo[]>([]);
   readonly carregando = signal(true);
 
@@ -103,6 +106,11 @@ export class ComprasPage {
   async atualizar(ev: CustomEvent): Promise<void> {
     await this.carregar();
     (ev.target as HTMLIonRefresherElement).complete();
+  }
+
+  /** Nome distinto do atualizar() acima, que e o pull-to-refresh da lista. */
+  aplicarAtualizacao(): void {
+    void this.atualizacao.aplicar();
   }
 
   async novaLista(): Promise<void> {

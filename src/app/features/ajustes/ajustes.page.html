@@ -97,5 +97,50 @@
     </div>
   </ion-list>
 
-  <p class="versao">ListAqui &middot; versao 1.0.0</p>
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Aplicativo</ion-label>
+    </ion-list-header>
+
+    <ion-item lines="none">
+      <ion-icon slot="start" name="pricetag-outline" color="medium" />
+      <ion-label>
+        <h2>Versao instalada</h2>
+        <p>
+          @if (atualizacao.disponivel()) {
+            Ha uma versao mais nova pronta para instalar
+          } @else {
+            Toque em procurar para conferir se ha versao nova
+          }
+        </p>
+      </ion-label>
+      <ion-note slot="end">{{ atualizacao.versaoInstalada }}</ion-note>
+    </ion-item>
+
+    <div class="botao-atualizar">
+      @if (atualizacao.disponivel()) {
+        <ion-button expand="block" (click)="atualizar()">
+          <ion-icon slot="start" name="cloud-download-outline" />
+          Atualizar agora
+        </ion-button>
+      } @else {
+        <ion-button
+          expand="block"
+          fill="outline"
+          [disabled]="procurando()"
+          (click)="procurarAtualizacao()"
+        >
+          <ion-icon slot="start" name="refresh-outline" />
+          {{ procurando() ? 'Procurando...' : 'Procurar atualizacao' }}
+        </ion-button>
+      }
+    </div>
+  </ion-list>
+
+  <ion-note class="dica">
+    O app se atualiza sozinho ao ser fechado e aberto de novo. No Android, sair pela tecla
+    inicial nao fecha de verdade - por isso este botao existe.
+  </ion-note>
+
+  <p class="versao">ListAqui &middot; versao {{ atualizacao.versaoInstalada }}</p>
 </ion-content>
