@@ -1,4 +1,4 @@
-import { ItemLista, Lista } from '../models/lista.model';
+import { ItemLista, Lista, ListaCompartilhada } from '../models/lista.model';
 
 /** Uma ocorrencia de compra de um produto, para montar historico de preco. */
 export interface RegistroPreco {
@@ -34,6 +34,13 @@ export abstract class ListaRepository {
   abstract atualizar(id: number, mudancas: Partial<Lista>): Promise<void>;
   abstract remover(id: number): Promise<void>;
   abstract duplicar(id: number, novoNome: string): Promise<number>;
+
+  /**
+   * Cria uma lista em montagem a partir de uma recebida de outro aparelho.
+   * Os itens sao casados com o catalogo local pelo nome, para que o
+   * historico de preco de quem recebe continue valendo.
+   */
+  abstract importar(dados: ListaCompartilhada): Promise<number>;
 
   // --- itens ---
   abstract itensDaLista(listaId: number): Promise<ItemLista[]>;

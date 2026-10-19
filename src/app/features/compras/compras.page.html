@@ -2,6 +2,9 @@
   <ion-toolbar>
     <ion-title>Minhas compras</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="receberLista()" aria-label="Receber lista">
+        <ion-icon slot="icon-only" name="download-outline" />
+      </ion-button>
       <ion-button (click)="novaLista()" aria-label="Nova compra">
         <ion-icon slot="icon-only" name="add-outline" />
       </ion-button>

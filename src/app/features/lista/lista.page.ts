@@ -23,6 +23,7 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular';
+import { codificarLista, montarLink } from '../../core/compartilhamento/compartilhamento';
 import { enviarNoEnter } from '../../core/formulario/enviar-no-enter';
 import {
   aplicarMascaraMoedaEm,
@@ -75,6 +76,7 @@ export class ListaPage {
   readonly sugestoes = signal<Produto[]>([]);
 
   private listaId!: number;
+  private linkEnvio = '';
 
   ionViewWillEnter(): void {
     this.listaId = Number(this.route.snapshot.paramMap.get('id'));
@@ -88,6 +90,10 @@ export class ListaPage {
     ]);
     this.lista.set(lista ?? null);
     this.itens.set(itens);
+
+    // Gerado aqui e nao no toque: o navigator.share exige um gesto recente
+    // do usuario, e no Safari um await antes dele ja invalida o gesto.
+    this.linkEnvio = lista && itens.length ? montarLink(await codificarLista(lista, itens)) : '';
   }
 
   // ------------------------------------------------------------ adicionar
@@ -192,6 +198,40 @@ export class ListaPage {
 
     await this.listaRepo.iniciarCompra(this.listaId);
     await this.router.navigate(['/listas', this.listaId, 'comprar'], { replaceUrl: true });
+  }
+
+  /**
+   * Envia a lista como link pelo compartilhamento nativo (WhatsApp etc.).
+   * Sem Web Share - desktop, alguns navegadores - copia o link.
+   */
+  async enviar(): Promise<void> {
+    const lista = this.lista();
+    const link = this.linkEnvio;
+    if (!lista || !link) return;
+
+    const texto = `Lista "${lista.nome}" (${this.itens().length} itens) no ListAqui:`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: lista.nome, text: texto, url: link });
+        return;
+      } catch (e) {
+        // Fechar a folha de compartilhamento nao e erro.
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(`${texto}\n${link}`);
+      await this.avisar('Link copiado. Cole na conversa com quem vai receber.');
+    } catch {
+      await this.avisar('Nao foi possivel compartilhar neste navegador.', 'warning');
+    }
+  }
+
+  private async avisar(message: string, color?: string): Promise<void> {
+    const toast = await this.toastCtrl.create({ message, duration: 3000, color });
+    await toast.present();
   }
 
   async renomear(): Promise<void> {

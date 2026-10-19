@@ -38,6 +38,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/produtos/produto-detalhe.page').then((m) => m.ProdutoDetalhePage),
   },
+  {
+    // Destino do link de lista enviada. A lista vem no fragmento (#...).
+    path: 'receber',
+    loadComponent: () => import('./features/receber/receber.page').then((m) => m.ReceberPage),
+  },
   { path: '', redirectTo: 'tabs/compras', pathMatch: 'full' },
   { path: '**', redirectTo: 'tabs/compras' },
 ];

@@ -5,6 +5,9 @@
     </ion-buttons>
     <ion-title>{{ lista()?.nome }}</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="enviar()" [disabled]="!itens().length" aria-label="Enviar lista">
+        <ion-icon slot="icon-only" name="share-social-outline" />
+      </ion-button>
       <ion-button (click)="renomear()" aria-label="Editar compra">
         <ion-icon slot="icon-only" name="create-outline" />
       </ion-button>

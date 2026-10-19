@@ -2,6 +2,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  AlertController,
   IonBadge,
   IonButton,
   IonButtons,
@@ -28,6 +29,8 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { AtualizacaoService } from '../../core/atualizacao/atualizacao.service';
+import { extrairCodigo } from '../../core/compartilhamento/compartilhamento';
+import { enviarNoEnter } from '../../core/formulario/enviar-no-enter';
 import { Lista, definicaoTipo } from '../../core/models/lista.model';
 import { recarregarAoVoltarDeFora } from '../../core/navegacao/recarregar-ao-voltar';
 import { ListaRepository, ResumoCompra } from '../../core/repositories/lista.repository';
@@ -72,6 +75,7 @@ export class ComprasPage {
   private readonly listaRepo = inject(ListaRepository);
   private readonly modalCtrl = inject(ModalController);
   private readonly toastCtrl = inject(ToastController);
+  private readonly alertCtrl = inject(AlertController);
   private readonly router = inject(Router);
 
   readonly atualizacao = inject(AtualizacaoService);
@@ -122,6 +126,45 @@ export class ComprasPage {
 
     const id = await this.listaRepo.criar(data);
     await this.router.navigate(['/listas', id]);
+  }
+
+  /**
+   * Caminho manual para lista enviada: colar o link (ou a mensagem inteira).
+   * Necessario no iPhone, onde o link abre no Safari e o app instalado na
+   * tela inicial nao enxerga o que foi gravado la.
+   */
+  async receberLista(): Promise<void> {
+    const alerta = await this.alertCtrl.create({
+      header: 'Receber lista',
+      message: 'Cole o link ou a mensagem que voce recebeu.',
+      inputs: [{ name: 'texto', placeholder: 'Link da lista' }],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Abrir', handler: (dados: { texto: string }) => this.abrirRecebida(dados.texto) },
+      ],
+    });
+    await alerta.present();
+
+    enviarNoEnter(alerta, async ([texto]) => {
+      if (this.abrirRecebida(texto)) await alerta.dismiss();
+    });
+  }
+
+  /** Retorna false para manter o alerta aberto quando o texto nao serve. */
+  private abrirRecebida(texto: string): boolean {
+    const codigo = extrairCodigo(texto);
+    if (!codigo) {
+      void this.toastCtrl
+        .create({
+          message: 'Nao encontrei uma lista nesse texto.',
+          duration: 2500,
+          color: 'warning',
+        })
+        .then((toast) => toast.present());
+      return false;
+    }
+    void this.router.navigate(['/receber'], { fragment: codigo });
+    return true;
   }
 
   abrir(item: ListaComResumo): void {

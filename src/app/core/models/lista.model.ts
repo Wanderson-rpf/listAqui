@@ -74,6 +74,24 @@ export interface ItemLista {
   foraDaLista?: boolean;
 }
 
+/**
+ * Uma lista enviada de outro aparelho. Carrega so o planejado: precos,
+ * orcamento e o que ja foi riscado sao gastos de quem enviou, nao de quem
+ * recebe. Tambem nao leva ids - os do outro aparelho nao significam nada aqui.
+ */
+export interface ListaCompartilhada {
+  nome: string;
+  tipo: TipoLista;
+  local?: string;
+  observacao?: string;
+  itens: {
+    nomeProduto: string;
+    unidade: UnidadeMedida;
+    quantidadePlanejada: number;
+    observacao?: string;
+  }[];
+}
+
 /** Total pago por um item ja comprado. */
 export function totalDoItem(item: ItemLista): number {
   if (!item.comprado || item.precoUnitario == null) return 0;

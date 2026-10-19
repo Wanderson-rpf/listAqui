@@ -1,0 +1,56 @@
+.cabecalho {
+  padding: 16px 16px 0;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.25rem;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: -4px;
+  }
+
+  ion-note {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+}
+
+.vazio {
+  padding: 48px 32px;
+  text-align: center;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 44px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 12px 0 20px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+}
+
+.rodape {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+
+  ion-note {
+    white-space: nowrap;
+    font-size: 0.78rem;
+  }
+
+  ion-button {
+    flex: 1;
+    margin: 0;
+  }
+}

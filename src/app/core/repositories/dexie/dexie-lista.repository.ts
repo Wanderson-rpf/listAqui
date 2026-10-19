@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { db } from '../../db/app-db';
-import { ItemLista, Lista, arredondar, totalDoItem } from '../../models/lista.model';
+import {
+  ItemLista,
+  Lista,
+  ListaCompartilhada,
+  arredondar,
+  totalDoItem,
+} from '../../models/lista.model';
+import { normalizarNome } from '../../models/produto.model';
 import { ListaRepository, RegistroPreco, ResumoCompra } from '../lista.repository';
 
 @Injectable()
@@ -72,6 +79,52 @@ export class DexieListaRepository extends ListaRepository {
       );
 
       return novoId;
+    });
+  }
+
+  async importar(dados: ListaCompartilhada): Promise<number> {
+    return db.transaction('rw', db.listas, db.itens, db.produtos, async () => {
+      const agora = Date.now();
+      const listaId = await db.listas.add({
+        nome: dados.nome,
+        tipo: dados.tipo,
+        local: dados.local,
+        observacao: dados.observacao,
+        status: 'montando',
+        criadoEm: agora,
+      });
+
+      // Mesma deduplicacao do ProdutoRepository.obterOuCriar, mas dentro
+      // desta transacao: ou a lista entra inteira, ou nada entra.
+      const itens: ItemLista[] = [];
+      for (const [ordem, item] of dados.itens.entries()) {
+        const chave = normalizarNome(item.nomeProduto);
+        const existente = await db.produtos.where('chaveBusca').equals(chave).first();
+        const produtoId =
+          existente?.id ??
+          (await db.produtos.add({
+            nome: item.nomeProduto,
+            chaveBusca: chave,
+            unidadePadrao: item.unidade,
+            vezesComprado: 0,
+            criadoEm: agora,
+            atualizadoEm: agora,
+          }));
+
+        itens.push({
+          listaId,
+          produtoId,
+          nomeProduto: existente?.nome ?? item.nomeProduto,
+          unidade: item.unidade,
+          quantidadePlanejada: item.quantidadePlanejada,
+          observacao: item.observacao,
+          ordem,
+          comprado: false,
+        });
+      }
+      await db.itens.bulkAdd(itens);
+
+      return listaId;
     });
   }
 

@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/compras" text="" />
+    </ion-buttons>
+    <ion-title>Lista recebida</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (erro()) {
+    <div class="vazio">
+      <ion-icon name="warning-outline" />
+      <p>{{ erro() }}</p>
+      <ion-button fill="outline" (click)="voltar()">
+        Ir para minhas compras
+      </ion-button>
+    </div>
+  }
+
+  @if (lista(); as lista) {
+    <div class="cabecalho">
+      <h2>{{ lista.nome }}</h2>
+      <div class="chips">
+        <ion-chip outline>{{ rotuloTipo(lista) }}</ion-chip>
+        @if (lista.local) {
+          <ion-chip outline>
+            <ion-icon name="location-outline" />
+            <ion-label>{{ lista.local }}</ion-label>
+          </ion-chip>
+        }
+      </div>
+      <ion-note>
+        Ao importar, ela vira uma lista nova sua, em montagem. Voce pode editar a vontade: quem
+        enviou nao ve as mudancas.
+      </ion-note>
+    </div>
+
+    <ion-list [inset]="true">
+      @for (item of lista.itens; track $index) {
+        <ion-item>
+          <ion-label>
+            <h2>{{ item.nomeProduto }}</h2>
+            @if (item.observacao) {
+              <p>{{ item.observacao }}</p>
+            }
+          </ion-label>
+          <ion-note slot="end">
+            {{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}
+          </ion-note>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>
+
+@if (lista(); as lista) {
+  <ion-footer>
+    <ion-toolbar>
+      <div class="rodape">
+        <ion-note>{{ lista.itens.length }} itens</ion-note>
+        <ion-button expand="block" [disabled]="importando()" (click)="importar()">
+          <ion-icon slot="start" name="download-outline" />
+          Importar lista
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+}

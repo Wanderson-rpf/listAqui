@@ -202,7 +202,13 @@ persistência após reload.
 
 Funcionando: montar lista, modo compra com total corrente, autocomplete de
 produtos, comparação com o último preço pago, item fora da lista, histórico por
-mês, evolução de preço por produto, exportação CSV e backup JSON.
+mês, evolução de preço por produto, exportação CSV e backup JSON, envio de
+lista para outra pessoa por link.
+
+O envio mora em `core/compartilhamento/`: a lista viaja inteira no fragmento
+do link (`/receber#...`), sem backend. Leva só o planejado — nunca preço nem
+orçamento — e quem recebe confirma antes de gravar. O link é contrato como o
+backup: mudar o pacote exige subir a `VERSAO` e continuar lendo a anterior.
 
 O que falta fazer mora em **[BACKLOG.md](BACKLOG.md)** — funcionalidades,
 melhorias de uso e dívida técnica, cada item com o porquê. Mantenha lá, não
