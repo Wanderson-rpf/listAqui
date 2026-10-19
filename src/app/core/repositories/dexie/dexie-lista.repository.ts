@@ -7,8 +7,14 @@ import {
   arredondar,
   totalDoItem,
 } from '../../models/lista.model';
+import { planejarMescla } from '../../compartilhamento/compartilhamento';
 import { normalizarNome } from '../../models/produto.model';
-import { ListaRepository, RegistroPreco, ResumoCompra } from '../lista.repository';
+import {
+  ListaRepository,
+  RegistroPreco,
+  ResultadoMescla,
+  ResumoCompra,
+} from '../lista.repository';
 
 @Injectable()
 export class DexieListaRepository extends ListaRepository {
@@ -94,37 +100,42 @@ export class DexieListaRepository extends ListaRepository {
         criadoEm: agora,
       });
 
-      // Mesma deduplicacao do ProdutoRepository.obterOuCriar, mas dentro
-      // desta transacao: ou a lista entra inteira, ou nada entra.
       const itens: ItemLista[] = [];
       for (const [ordem, item] of dados.itens.entries()) {
-        const chave = normalizarNome(item.nomeProduto);
-        const existente = await db.produtos.where('chaveBusca').equals(chave).first();
-        const produtoId =
-          existente?.id ??
-          (await db.produtos.add({
-            nome: item.nomeProduto,
-            chaveBusca: chave,
-            unidadePadrao: item.unidade,
-            vezesComprado: 0,
-            criadoEm: agora,
-            atualizadoEm: agora,
-          }));
-
-        itens.push({
-          listaId,
-          produtoId,
-          nomeProduto: existente?.nome ?? item.nomeProduto,
-          unidade: item.unidade,
-          quantidadePlanejada: item.quantidadePlanejada,
-          observacao: item.observacao,
-          ordem,
-          comprado: false,
-        });
+        itens.push(await novoItemRecebido(listaId, ordem, item));
       }
       await db.itens.bulkAdd(itens);
 
       return listaId;
+    });
+  }
+
+  async mesclar(listaId: number, dados: ListaCompartilhada): Promise<ResultadoMescla> {
+    return db.transaction('rw', db.listas, db.itens, db.produtos, async () => {
+      const locais = await this.itensDaLista(listaId);
+      const passos = planejarMescla(locais, dados.itens);
+      let ordem = locais.length ? Math.max(...locais.map((i) => i.ordem)) + 1 : 0;
+
+      const novos: ItemLista[] = [];
+      for (const passo of passos) {
+        if (passo.tipo === 'novo') {
+          novos.push(await novoItemRecebido(listaId, ordem++, passo.recebido));
+        } else if (passo.tipo === 'atualizar') {
+          await db.itens.update(passo.local.id!, passo.mudancas);
+        }
+      }
+      if (novos.length) await db.itens.bulkAdd(novos);
+
+      // Lista sem local ganha o de quem enviou; a sua escolha nunca e sobrescrita.
+      const lista = await db.listas.get(listaId);
+      if (lista && !lista.local && dados.local) {
+        await db.listas.update(listaId, { local: dados.local });
+      }
+
+      return {
+        novos: novos.length,
+        atualizados: passos.filter((p) => p.tipo === 'atualizar').length,
+      };
     });
   }
 
@@ -275,4 +286,40 @@ export class DexieListaRepository extends ListaRepository {
 
 function peso(status: Lista['status']): number {
   return status === 'comprando' ? 1 : 0;
+}
+
+/**
+ * Item de lista recebida, ligado ao catalogo local pelo nome. Mesma
+ * deduplicacao do ProdutoRepository.obterOuCriar, mas precisa rodar dentro
+ * da transacao de quem chama: ou a lista entra inteira, ou nada entra.
+ */
+async function novoItemRecebido(
+  listaId: number,
+  ordem: number,
+  item: ListaCompartilhada['itens'][number],
+): Promise<ItemLista> {
+  const chave = normalizarNome(item.nomeProduto);
+  const existente = await db.produtos.where('chaveBusca').equals(chave).first();
+  const agora = Date.now();
+  const produtoId =
+    existente?.id ??
+    (await db.produtos.add({
+      nome: item.nomeProduto,
+      chaveBusca: chave,
+      unidadePadrao: item.unidade,
+      vezesComprado: 0,
+      criadoEm: agora,
+      atualizadoEm: agora,
+    }));
+
+  return {
+    listaId,
+    produtoId,
+    nomeProduto: existente?.nome ?? item.nomeProduto,
+    unidade: item.unidade,
+    quantidadePlanejada: item.quantidadePlanejada,
+    observacao: item.observacao,
+    ordem,
+    comprado: false,
+  };
 }

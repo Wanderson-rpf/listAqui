@@ -71,8 +71,12 @@ here-strings do PowerShell quebram com aspas e acentos no meio.
 
 ## 6. Tag e push
 
-- `git tag vX.Y.Z`
+- `git tag -a vX.Y.Z -m "vX.Y.Z"`
 - `git push --follow-tags origin main`
+
+A tag precisa ser **anotada** (`-a`): o `--follow-tags` ignora tag simples
+em silêncio — o push sai sem erro e a tag fica só na máquina. Confira com
+`git ls-remote --tags origin vX.Y.Z`.
 
 A tag é o que permite responder depois "o que exatamente está no celular" e
 serve de ponto de retorno para um rollback.

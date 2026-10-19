@@ -30,11 +30,27 @@
           </ion-chip>
         }
       </div>
-      <ion-note>
-        Ao importar, ela vira uma lista nova sua, em montagem. Voce pode editar a vontade: quem
-        enviou nao ve as mudancas.
-      </ion-note>
+      @if (!homonima()) {
+        <ion-note>
+          Ao importar, ela vira uma lista nova sua, em montagem. Voce pode editar a vontade: quem
+          enviou nao ve as mudancas.
+        </ion-note>
+      }
     </div>
+
+    @if (homonima(); as homonima) {
+      <div class="mescla">
+        <ion-icon name="git-merge-outline" aria-hidden="true" />
+        <div>
+          <strong>Voce ja tem "{{ homonima.nome }}" em aberto</strong>
+          @if (textoPrevia()) {
+            <span>Mesclar adiciona {{ textoPrevia() }}. Nada da sua lista e removido.</span>
+          } @else {
+            <span>Sua lista ja tem tudo o que veio nesta.</span>
+          }
+        </div>
+      </div>
+    }
 
     <ion-list [inset]="true">
       @for (item of lista.itens; track $index) {
@@ -45,9 +61,12 @@
               <p>{{ item.observacao }}</p>
             }
           </ion-label>
-          <ion-note slot="end">
-            {{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}
-          </ion-note>
+          <div class="direita" slot="end">
+            <ion-note>{{ formatarQtd(item.quantidadePlanejada) }} {{ item.unidade }}</ion-note>
+            @if (homonima() && jaEstaNaLista(item.nomeProduto)) {
+              <small>ja na sua</small>
+            }
+          </div>
         </ion-item>
       }
     </ion-list>
@@ -57,13 +76,26 @@
 @if (lista(); as lista) {
   <ion-footer>
     <ion-toolbar>
-      <div class="rodape">
-        <ion-note>{{ lista.itens.length }} itens</ion-note>
-        <ion-button expand="block" [disabled]="importando()" (click)="importar()">
-          <ion-icon slot="start" name="download-outline" />
-          Importar lista
-        </ion-button>
-      </div>
+      @if (homonima()) {
+        <!-- Mesclar em cima: e o botao que o polegar alcanca primeiro. -->
+        <div class="rodape duplo">
+          <ion-button expand="block" [disabled]="importando() || !textoPrevia()" (click)="mesclar()">
+            <ion-icon slot="start" name="git-merge-outline" />
+            Mesclar com a minha
+          </ion-button>
+          <ion-button expand="block" fill="outline" [disabled]="importando()" (click)="importar()">
+            Importar como nova
+          </ion-button>
+        </div>
+      } @else {
+        <div class="rodape">
+          <ion-note>{{ lista.itens.length }} itens</ion-note>
+          <ion-button expand="block" [disabled]="importando()" (click)="importar()">
+            <ion-icon slot="start" name="download-outline" />
+            Importar lista
+          </ion-button>
+        </div>
+      }
     </ion-toolbar>
   </ion-footer>
 }

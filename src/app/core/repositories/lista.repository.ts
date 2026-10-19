@@ -20,6 +20,12 @@ export interface ResumoCompra {
   itensTotal: number;
 }
 
+/** O que uma mescla mudou na lista local. */
+export interface ResultadoMescla {
+  novos: number;
+  atualizados: number;
+}
+
 /**
  * Contrato de acesso a listas e seus itens.
  * A lista e o "aggregate root": os itens so existem dentro de uma lista,
@@ -41,6 +47,14 @@ export abstract class ListaRepository {
    * historico de preco de quem recebe continue valendo.
    */
   abstract importar(dados: ListaCompartilhada): Promise<number>;
+
+  /**
+   * Junta uma lista recebida a uma lista local em aberto. Nunca remove nada:
+   * item novo entra no fim; item repetido fica com a maior quantidade (nao a
+   * soma - a mesma lista indo e voltando entre duas pessoas dobraria tudo).
+   * Item ja riscado ou com unidade diferente nao e tocado.
+   */
+  abstract mesclar(listaId: number, dados: ListaCompartilhada): Promise<ResultadoMescla>;
 
   // --- itens ---
   abstract itensDaLista(listaId: number): Promise<ItemLista[]>;

@@ -21,6 +21,49 @@
   }
 }
 
+.mescla {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  // Veu translucido em vez de cor solida: o texto herda a cor do tema e
+  // continua legivel no escuro (ver "Paleta calibrada" no BACKLOG).
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 22px;
+    color: var(--ion-color-primary);
+  }
+
+  strong {
+    display: block;
+    font-size: 0.92rem;
+  }
+
+  span {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ion-color-medium);
+  }
+}
+
+.direita {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+
+  small {
+    font-size: 0.68rem;
+    color: var(--ion-color-success);
+  }
+}
+
 .vazio {
   padding: 48px 32px;
   text-align: center;
@@ -52,5 +95,15 @@
   ion-button {
     flex: 1;
     margin: 0;
+  }
+
+  &.duplo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+
+    ion-button {
+      flex: none;
+    }
   }
 }

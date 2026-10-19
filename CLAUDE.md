@@ -210,6 +210,12 @@ do link (`/receber#...`), sem backend. Leva só o planejado — nunca preço nem
 orçamento — e quem recebe confirma antes de gravar. O link é contrato como o
 backup: mudar o pacote exige subir a `VERSAO` e continuar lendo a anterior.
 
+Se quem recebe já tem uma lista **em aberto** com o mesmo nome, pode mesclar
+em vez de criar outra. A regra vive só em `planejarMescla()` (prévia e
+gravação usam a mesma função): nunca remove; repetido fica com a **maior**
+quantidade, não a soma — a mesma lista indo e voltando entre duas pessoas
+dobraria tudo; item já riscado ou de unidade diferente não é tocado.
+
 O que falta fazer mora em **[BACKLOG.md](BACKLOG.md)** — funcionalidades,
 melhorias de uso e dívida técnica, cada item com o porquê. Mantenha lá, não
 aqui: duas listas de pendências divergem em uma semana.

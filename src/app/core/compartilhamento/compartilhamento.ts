@@ -1,5 +1,5 @@
 import { ItemLista, Lista, ListaCompartilhada, TIPOS_LISTA } from '../models/lista.model';
-import { UNIDADES, UnidadeMedida } from '../models/produto.model';
+import { UNIDADES, UnidadeMedida, normalizarNome } from '../models/produto.model';
 
 /**
  * Envio de lista entre aparelhos sem backend: a lista inteira viaja dentro
@@ -118,6 +118,52 @@ export async function decodificarLista(codigo: string): Promise<ListaCompartilha
     observacao: texto(pacote.o),
     itens,
   };
+}
+
+// ----------------------------------------------------------------- mescla
+
+type ItemRecebido = ListaCompartilhada['itens'][number];
+
+/** O que fazer com cada item recebido ao mesclar com uma lista local. */
+export type PassoMescla =
+  | { tipo: 'novo'; recebido: ItemRecebido }
+  | { tipo: 'atualizar'; recebido: ItemRecebido; local: ItemLista; mudancas: Partial<ItemLista> }
+  | { tipo: 'manter'; recebido: ItemRecebido; local: ItemLista };
+
+/**
+ * Regra unica da mescla, usada pela previa e pela gravacao - assim o que a
+ * tela promete e exatamente o que o repositorio faz.
+ *
+ * Casa pelo nome normalizado. Repetido fica com a maior quantidade, nao a
+ * soma: o caso tipico e a mesma lista indo e voltando entre duas pessoas.
+ * Item ja riscado ou de unidade diferente (2 un x 0,5 kg) nao e tocado.
+ */
+export function planejarMescla(locais: ItemLista[], recebidos: ItemRecebido[]): PassoMescla[] {
+  const porNome = new Map(locais.map((i) => [normalizarNome(i.nomeProduto), i]));
+  const vistos = new Set<string>();
+
+  return recebidos.flatMap((recebido): PassoMescla[] => {
+    const chave = normalizarNome(recebido.nomeProduto);
+    // Repetido dentro da propria lista recebida: o primeiro vale.
+    if (vistos.has(chave)) return [];
+    vistos.add(chave);
+
+    const local = porNome.get(chave);
+    if (!local) return [{ tipo: 'novo', recebido }];
+    if (local.comprado || local.unidade !== recebido.unidade) {
+      return [{ tipo: 'manter', recebido, local }];
+    }
+
+    const mudancas: Partial<ItemLista> = {};
+    if (recebido.quantidadePlanejada > local.quantidadePlanejada) {
+      mudancas.quantidadePlanejada = recebido.quantidadePlanejada;
+    }
+    if (!local.observacao && recebido.observacao) mudancas.observacao = recebido.observacao;
+
+    return Object.keys(mudancas).length
+      ? [{ tipo: 'atualizar', recebido, local, mudancas }]
+      : [{ tipo: 'manter', recebido, local }];
+  });
 }
 
 // ---------------------------------------------------------------- helpers
